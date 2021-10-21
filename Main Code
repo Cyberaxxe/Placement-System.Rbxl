@@ -1,0 +1,44 @@
+local Placeables = script.Parent.Frame:GetChildren()
+
+local part = game.Workspace.Part
+
+local rendering =  game:GetService("RunService")
+
+local firing
+local isPlacing = false
+
+local player = game.Players.LocalPlayer
+local Mouse = player:GetMouse()
+local UIS = game:GetService("UserInputService")
+
+for _, PlaceablePicked in pairs(Placeables) do
+	PlaceablePicked.MouseButton1Click:Connect(function()	
+		
+		local newModelPreview = PlaceablePicked.Model:Clone()
+		newModelPreview.Parent = workspace
+		newModelPreview.Transparency = 0.9
+		newModelPreview.Color = Color3.new(0.333333, 1, 0)
+		newModelPreview.Material = "Foil"
+		
+		
+		local renderLoop = rendering.RenderStepped:Connect(function()
+			newModelPreview.Position = Vector3.new(Mouse.Hit.X, 0, Mouse.Hit.Z)
+			isPlacing = true
+			
+		end)
+		
+		 firing = UIS.InputBegan:Connect(function(input, gameStuff)
+			if not gameStuff then
+				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+					
+					newModelPreview.Position = Vector3.new(Mouse.Hit.X, Mouse.Hit.Y, Mouse.Hit.Z)
+					renderLoop:Disconnect()
+					wait(0.2)
+					firing:Disconnect()
+				end
+			end
+		end)
+	end)
+end
+
+--This is only client Sided w/barely any features. Dm me if you want the full version ModuleScript.py 1538
